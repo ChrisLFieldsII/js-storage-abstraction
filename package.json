@@ -5,7 +5,7 @@
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/YOUR_GITHUB_USER_NAME/js-storage-abstraction",
+  "repository": "https://github.com/ChrisLFieldsII/js-storage-abstraction",
   "license": "MIT",
   "keywords": ["JavaScript", "typescript", "storage", "abstraction"],
   "scripts": {
