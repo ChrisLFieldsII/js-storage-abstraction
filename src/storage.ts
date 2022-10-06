@@ -82,7 +82,10 @@ export interface IStorage<T extends KeyId> {
  * getting storage as json, etc
  */
 export class JSStorage<T extends KeyId> implements IStorage<T> {
-  constructor(private storage: TypedStorage<T>) {}
+  constructor(private storage: TypedStorage<T>) {
+    this.clear = this.clear.bind(this);
+    this.getJSON = this.getJSON.bind(this);
+  }
 
   use(key: T): Key<T> {
     return this.storage[key];
