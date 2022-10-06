@@ -1,0 +1,244 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>js-storage-abstraction</title>
+	<meta name="description" content="Documentation for js-storage-abstraction">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">js-storage-abstraction</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>js-storage-abstraction</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#js-storage-abstraction" id="js-storage-abstraction" style="color: inherit; text-decoration: none;">
+					<h1>js-storage-abstraction</h1>
+				</a>
+				<a href="#description" id="description" style="color: inherit; text-decoration: none;">
+					<h2>Description</h2>
+				</a>
+				<p>An abstraction to use the many different storage libraries in the js ecosystem</p>
+				<p>Build your apps <code>storage</code> object with <code>Keys</code></p>
+				<p>Provides an abstract <code>Key</code> class that you can extend to make keys of all types.</p>
+				<p>For example, make a <code>Key</code> that uses <code>AsyncStorage</code> or make a <code>Key</code> that uses <code>SecureStorage</code> or make a <code>Key</code> that uses <code>SessionStorage</code>, etc.</p>
+				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+					<h2>Features</h2>
+				</a>
+				<ul>
+					<li>Stores everything as a <code>string</code> but provides helper methods for storing/getting data of different types like <code>number</code>, <code>date</code>, <code>boolean</code>, <code>json</code>.</li>
+					<li>Storage keys are based off a string union so you can centralize apps known storage keys. Very TypeScript friendly!</li>
+				</ul>
+				<a href="#code" id="code" style="color: inherit; text-decoration: none;">
+					<h2>Code!</h2>
+				</a>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Key, TypedStorage, JSStorage } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;js-storage-abstraction&#x27;</span>;
+
+<span class="hljs-keyword">let</span> inMemoryStorage: Record&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">any</span>&gt; = {};
+
+<span class="hljs-comment">/** the storage ids that your app uses */</span>
+<span class="hljs-keyword">type</span> StorageId =
+  | <span class="hljs-string">&#x27;stringType&#x27;</span>
+  | <span class="hljs-string">&#x27;boolType&#x27;</span>
+  | <span class="hljs-string">&#x27;numType&#x27;</span>
+  | <span class="hljs-string">&#x27;dateType&#x27;</span>
+  | <span class="hljs-string">&#x27;jsonType&#x27;</span>;
+
+<span class="hljs-comment">/**
+ * This key would pull from async storage
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AsyncKey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Key</span>&lt;<span class="hljs-title">StorageId</span>&gt; </span>{
+  get(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>&gt; {
+    <span class="hljs-keyword">return</span> inMemoryStorage[<span class="hljs-built_in">this</span>.name];
+  }
+
+  <span class="hljs-keyword">async</span> set(value: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; {
+    inMemoryStorage[<span class="hljs-built_in">this</span>.name] = value;
+  }
+
+  <span class="hljs-keyword">async</span> <span class="hljs-keyword">delete</span>(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; {
+    <span class="hljs-keyword">delete</span> inMemoryStorage[<span class="hljs-built_in">this</span>.name];
+  }
+}
+
+<span class="hljs-comment">/*
+  The below key subclasses are just examples of how there can be many different types of `Keys`
+  You would still need to override the `get`, `set, &amp; `delete` methods with the appropriate logic.
+*/</span>
+
+<span class="hljs-comment">/**
+ * This key would pull from secure storage
+ * (but we just extend AsyncKey here for illustration purposes)
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecureKey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AsyncKey</span> </span>{}
+
+<span class="hljs-comment">/**
+ * This key would use session storage
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SessionKey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AsyncKey</span> </span>{}
+
+<span class="hljs-comment">/**
+ * This key takes care of splitting a long value into parts for storages that have item limits
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MultipartSecureKey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AsyncKey</span> </span>{}
+
+<span class="hljs-comment">/**
+ * This key saves its values in a mysterious format...
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MysteriousKey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AsyncKey</span> </span>{}
+
+<span class="hljs-comment">/**
+ * your storage is just an object where value is of subclass `Key`
+ */</span>
+<span class="hljs-keyword">const</span> typedStorage: TypedStorage&lt;StorageId&gt; = {
+  <span class="hljs-attr">stringType</span>: <span class="hljs-keyword">new</span> AsyncKey(<span class="hljs-string">&#x27;stringType&#x27;</span>),
+  <span class="hljs-attr">boolType</span>: <span class="hljs-keyword">new</span> MysteriousKey(<span class="hljs-string">&#x27;boolType&#x27;</span>),
+  <span class="hljs-attr">numType</span>: <span class="hljs-keyword">new</span> MultipartSecureKey(<span class="hljs-string">&#x27;numType&#x27;</span>),
+  <span class="hljs-attr">dateType</span>: <span class="hljs-keyword">new</span> SessionKey(<span class="hljs-string">&#x27;dateType&#x27;</span>),
+  <span class="hljs-attr">jsonType</span>: <span class="hljs-keyword">new</span> SecureKey(<span class="hljs-string">&#x27;jsonType&#x27;</span>),
+};
+
+typedStorage.stringType.set(<span class="hljs-string">&#x27;hello world&#x27;</span>);
+
+<span class="hljs-comment">/**
+ * Wrap your storage with `JSStorage` class to gain access to functionality like
+ * `clear` whole storage or `getJSON` to get current storage as json object
+ */</span>
+<span class="hljs-keyword">const</span> storage = <span class="hljs-keyword">new</span> JSStorage(typedStorage);
+
+<span class="hljs-keyword">const</span> stringTypeKey: Key = storage.use(<span class="hljs-string">&#x27;stringType&#x27;</span>); <span class="hljs-comment">// the `use` function can retrieve a `Key` from `typedStorage`</span>
+stringTypeKey.set(<span class="hljs-string">&#x27;hello world&#x27;</span>);
+
+<span class="hljs-keyword">const</span> numTypeKey: Key = storage.use(<span class="hljs-string">&#x27;numType&#x27;</span>);
+numTypeKey.setNumber(<span class="hljs-number">7</span>);
+
+storage.clear(); <span class="hljs-comment">// delete whole storage</span>
+
+<span class="hljs-keyword">const</span> storageJSON = storage.getJSON(); <span class="hljs-comment">// get current storage as json object. useful for debugging, displaying in UI</span>
+</code></pre>
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h2>Examples</h2>
+				</a>
+				<ul>
+					<li>Check out the test file <a href="./test.ts">test.ts</a></li>
+					<li>Check out example react app <a href="./example/src/App.tsx">App.tsx</a></li>
+				</ul>
+				<a href="#improvements" id="improvements" style="color: inherit; text-decoration: none;">
+					<h2>Improvements</h2>
+				</a>
+				<ul>
+					<li>make <code>Keys</code> out of the box for common storage providers. basically did this in example app with <code>localStorage</code> and <code>sessionStorage</code></li>
+					<li>improve naming of package and <code>JSStorage</code>??</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/jsstorage.html" class="tsd-kind-icon">JSStorage</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/key.html" class="tsd-kind-icon">Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ikey.html" class="tsd-kind-icon">IKey</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/istorage.html" class="tsd-kind-icon">IStorage</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#keyid" class="tsd-kind-icon">Key<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#typedstorage" class="tsd-kind-icon">Typed<wbr>Storage</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
