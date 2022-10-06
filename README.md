@@ -1,5 +1,7 @@
 # js-storage-abstraction
 
+## Description
+
 An abstraction to use the many different storage libraries in the js ecosystem
 
 Build your apps `storage` object with `Keys`
@@ -12,6 +14,8 @@ For example, make a `Key` that uses `AsyncStorage` or make a `Key` that uses `Se
 
 - Stores everything as a `string` but provides helper methods for storing/getting data of different types like `number`, `date`, `boolean`, `json`.
 - Storage keys are based off a string union so you can centralize apps known storage keys. Very TypeScript friendly!
+
+## Code!
 
 ```typescript
 import { Key, TypedStorage, JSStorage } from 'js-storage-abstraction';
@@ -96,5 +100,15 @@ numTypeKey.setNumber(7);
 
 storage.clear(); // delete whole storage
 
-storage.getJSON(); // get current storage as json object. useful for debugging, displaying in UI
+const storageJSON = storage.getJSON(); // get current storage as json object. useful for debugging, displaying in UI
 ```
+
+## Examples
+
+- Check out the test file [test.ts](./test.ts)
+- Check out example react app [App.tsx](./example/src/App.tsx)
+
+## Improvements
+
+- make `Keys` out of the box for common storage providers. basically did this in example app with `localStorage` and `sessionStorage`
+- improve naming of package and `JSStorage`??
