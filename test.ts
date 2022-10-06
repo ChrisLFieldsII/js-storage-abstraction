@@ -1,19 +1,14 @@
-import { Key, TypedStorage } from './src';
+import { JSStorage, Key, TypedStorage } from './src';
 import test from 'ava';
 
 /* 
   the goal is to test abstract class helper methods behave as expected
 */
-
-let inMemoryStorage: Record<string, any> = {};
+type InMemoryStorage = Record<string, any>;
+let inMemoryStorage: InMemoryStorage = {};
 
 /** the storage ids that your app uses */
-type StorageId =
-  | 'stringType'
-  | 'boolType'
-  | 'numType'
-  | 'dateType'
-  | 'jsonType';
+type StorageId = 'boolType' | 'numType' | 'dateType' | 'jsonType';
 
 /**
  * This key would pull from async storage
@@ -61,51 +56,98 @@ class MysteriousKey extends AsyncKey {}
 /**
  * your storage is just an object where value is of subclass `Key`
  */
-const storage: TypedStorage<StorageId> = {
-  stringType: new AsyncKey('stringType'),
+const typedStorage: TypedStorage<StorageId> = {
   boolType: new MysteriousKey('boolType'),
   numType: new MultipartSecureKey('numType'),
   dateType: new SessionKey('dateType'),
   jsonType: new SecureKey('jsonType'),
 };
+const storage = new JSStorage({ storage: typedStorage });
+const constantDate = new Date();
+const expectedStorage = {
+  numType: 7,
+  dateType: constantDate.toISOString(),
+  boolType: false,
+  jsonType: {
+    name: 'chris',
+  },
+};
 
-test('getNum', async (t) => {
+/** @desc returns object where all values are guaranteed strings */
+const stringifyObject = (
+  obj: Record<string, unknown>
+): Record<string, string> => {
+  const cast = (value: any): string => {
+    const castValue = value + ''; // cast to string
+
+    // assume json
+    if (castValue === '[object Object]') {
+      return JSON.stringify(value);
+    }
+
+    return castValue;
+  };
+
+  return Object.keys(obj).reduce((accum, key) => {
+    return {
+      ...accum,
+      [key]: cast(obj[key]),
+    };
+  }, {});
+};
+
+test.serial('key.getNum', async (t) => {
   // lucky number 7
-  const expected = 7;
+  const expected = expectedStorage.numType;
 
-  await storage.numType.setNumber(expected);
+  await storage.use('numType').setNumber(expected);
 
-  const actual = await storage.numType.getNumber();
+  const actual = await storage.use('numType').getNumber();
   t.is(actual, expected);
 });
 
-test('getDate', async (t) => {
-  const date = new Date();
-  const expected = date.toISOString();
-  await storage.dateType.setDate(date);
+test.serial('key.getDate', async (t) => {
+  const expected = expectedStorage.dateType;
+  await storage.use('dateType').setDate(constantDate);
 
-  const actual = (await storage.dateType.getDate()).toISOString();
+  const actual = (await storage.use('dateType').getDate()).toISOString();
   t.is(actual, expected);
 });
 
-test('getBool', async (t) => {
+test.serial('key.getBool', async (t) => {
   let expected = true;
-  await storage.boolType.setBoolean(expected);
-  let actual = await storage.boolType.getBoolean();
+  await storage.use('boolType').setBoolean(expected);
+  let actual = await storage.use('boolType').getBoolean();
   t.is(actual, expected);
 
   expected = false;
-  await storage.boolType.setBoolean(expected);
-  actual = await storage.boolType.getBoolean();
+  await storage.use('boolType').setBoolean(expected);
+  actual = await storage.use('boolType').getBoolean();
   t.is(actual, expected);
 });
 
-test('getJSON', async (t) => {
-  const expected = {
-    name: 'chris',
-  };
+test.serial('key.getJSON', async (t) => {
+  const expected = expectedStorage.jsonType;
 
-  await storage.jsonType.setJSON(expected);
-  const actual = await storage.jsonType.getJSON<typeof expected>();
+  await storage.use('jsonType').setJSON(expected);
+  const actual = await storage.use('jsonType').getJSON<typeof expected>();
+  t.deepEqual(actual, expected);
+});
+
+test.serial('storage.getJSON', async (t) => {
+  const expected = stringifyObject(expectedStorage);
+  const actual = await storage.getJSON();
+  t.deepEqual(actual, expected);
+});
+
+test.serial('storage.clear', async (t) => {
+  const expected: Record<StorageId, undefined> = {
+    boolType: undefined,
+    dateType: undefined,
+    jsonType: undefined,
+    numType: undefined,
+  };
+  const actual = await storage.clear().then(() => storage.getJSON());
+
   t.deepEqual(actual, expected);
 });

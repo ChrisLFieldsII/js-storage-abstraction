@@ -64,3 +64,62 @@ export abstract class Key<T extends KeyId> implements IKey {
  * Type for your `storage` object
  */
 export type TypedStorage<T extends KeyId> = Record<T, Key<T>>;
+
+export interface IStorage<T extends KeyId> {
+  /** Use a key in storage */
+  use(key: T): Key<T>;
+  /**
+   * Delete all keys in storage
+   */
+  clear(): Promise<void>;
+  /** get storage as json object */
+  getJSON(): Promise<Record<T, string>>;
+}
+
+export type JSStorageConfig<T extends KeyId> = {
+  storage: TypedStorage<T>;
+};
+
+/**
+ * Convenience storage object that wraps `TypedStorage` to provide
+ * common functionalities like using a key, clearing whole storage,
+ * getting storage as json, etc
+ */
+export class JSStorage<T extends KeyId> implements IStorage<T> {
+  constructor(private config: JSStorageConfig<T>) {}
+
+  use(key: T): Key<T> {
+    return this.config.storage[key];
+  }
+
+  async clear(): Promise<void> {
+    const { storage } = this.config;
+
+    const keys = Object.keys(storage) as T[];
+
+    const promises = keys.map((key) => {
+      return storage[key].delete();
+    });
+
+    await Promise.all(promises);
+  }
+
+  async getJSON(): Promise<Record<T, string | undefined>> {
+    const { storage } = this.config;
+
+    const keys = Object.keys(storage) as T[];
+
+    const promises = keys.map((key) => {
+      return storage[key].get();
+    });
+
+    const values = await Promise.all(promises);
+
+    return keys.reduce((accum, key, index) => {
+      return {
+        ...accum,
+        [key]: values[index],
+      };
+    }, {} as Record<T, string | undefined>);
+  }
+}
