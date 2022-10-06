@@ -15,6 +15,8 @@ export interface IKey {
   setJSON(value: any): Promise<void>;
 }
 
+type KeyId = string;
+
 // NOTE: assume happy path. clients can deal with errors. dont want to assume their return values.
 /**
  * Abstract class to implement your keys.
@@ -22,8 +24,8 @@ export interface IKey {
  *
  * Only need to override `get`, `set`, `delete`.
  */
-export abstract class Key implements IKey {
-  constructor(public name: string) {}
+export abstract class Key<T extends KeyId> implements IKey {
+  constructor(public name: T) {}
 
   abstract get(): Promise<string | null>;
   abstract set(value: string): Promise<void>;
@@ -57,3 +59,8 @@ export abstract class Key implements IKey {
     await this.set(JSON.stringify(value));
   }
 }
+
+/**
+ * Type for your `storage` object
+ */
+export type TypedStorage<T extends KeyId> = Record<T, Key<T>>;

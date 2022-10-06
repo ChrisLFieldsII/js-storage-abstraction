@@ -1,4 +1,4 @@
-import { Key } from './src';
+import { Key, TypedStorage } from './src';
 import test from 'ava';
 
 /* 
@@ -7,10 +7,18 @@ import test from 'ava';
 
 let inMemoryStorage: Record<string, any> = {};
 
+/** the storage ids that your app uses */
+type StorageId =
+  | 'stringType'
+  | 'boolType'
+  | 'numType'
+  | 'dateType'
+  | 'jsonType';
+
 /**
  * This key would pull from async storage
  */
-class AsyncKey extends Key {
+class AsyncKey extends Key<StorageId> {
   get(): Promise<string | null> {
     return inMemoryStorage[this.name];
   }
@@ -53,7 +61,7 @@ class MysteriousKey extends AsyncKey {}
 /**
  * your storage is just an object where value is of subclass `Key`
  */
-const storage = {
+const storage: TypedStorage<StorageId> = {
   stringType: new AsyncKey('stringType'),
   boolType: new MysteriousKey('boolType'),
   numType: new MultipartSecureKey('numType'),
