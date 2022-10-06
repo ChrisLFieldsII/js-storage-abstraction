@@ -14,7 +14,7 @@ For example, make a `Key` that uses `AsyncStorage` or make a `Key` that uses `Se
 - Storage keys are based off a string union so you can centralize apps known storage keys. Very TypeScript friendly!
 
 ```typescript
-import { Key, TypedStorage } from 'js-storage-abstraction';
+import { Key, TypedStorage, JSStorage } from 'js-storage-abstraction';
 
 let inMemoryStorage: Record<string, any> = {};
 
@@ -72,11 +72,29 @@ class MysteriousKey extends AsyncKey {}
 /**
  * your storage is just an object where value is of subclass `Key`
  */
-const storage: TypedStorage<StorageId> = {
+const typedStorage: TypedStorage<StorageId> = {
   stringType: new AsyncKey('stringType'),
   boolType: new MysteriousKey('boolType'),
   numType: new MultipartSecureKey('numType'),
   dateType: new SessionKey('dateType'),
   jsonType: new SecureKey('jsonType'),
 };
+
+typedStorage.stringType.set('hello world');
+
+/**
+ * Wrap your storage with `JSStorage` class to gain access to functionality like
+ * `clear` whole storage or `getJSON` to get current storage as json object
+ */
+const storage = new JSStorage(typedStorage);
+
+const stringTypeKey: Key = storage.use('stringType'); // the `use` function can retrieve a `Key` from `typedStorage`
+stringTypeKey.set('hello world');
+
+const numTypeKey: Key = storage.use('numType');
+numTypeKey.setNumber(7);
+
+storage.clear(); // delete whole storage
+
+storage.getJSON(); // get current storage as json object. useful for debugging, displaying in UI
 ```

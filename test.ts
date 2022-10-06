@@ -62,7 +62,13 @@ const typedStorage: TypedStorage<StorageId> = {
   dateType: new SessionKey('dateType'),
   jsonType: new SecureKey('jsonType'),
 };
+
+/**
+ * Wrap your storage with `JSStorage` class to gain access to functionality like
+ * `clear` whole storage or `getJSON` to get current storage as json object
+ */
 const storage = new JSStorage(typedStorage);
+
 const constantDate = new Date();
 const expectedStorage = {
   numType: 7,
