@@ -11,16 +11,25 @@ For example, make a `Key` that uses `AsyncStorage` or make a `Key` that uses `Se
 ## Features
 
 - Stores everything as a `string` but provides helper methods for storing/getting data of different types like `number`, `date`, `boolean`, `json`.
+- Storage keys are based off a string union so you can centralize apps known storage keys. Very TypeScript friendly!
 
 ```typescript
-import { Key } from 'js-storage-abstraction';
+import { Key, TypedStorage } from 'js-storage-abstraction';
 
 let inMemoryStorage: Record<string, any> = {};
+
+/** the storage ids that your app uses */
+type StorageId =
+  | 'stringType'
+  | 'boolType'
+  | 'numType'
+  | 'dateType'
+  | 'jsonType';
 
 /**
  * This key would pull from async storage
  */
-class AsyncKey extends Key {
+class AsyncKey extends Key<StorageId> {
   get(): Promise<string | null> {
     return inMemoryStorage[this.name];
   }
@@ -63,7 +72,7 @@ class MysteriousKey extends AsyncKey {}
 /**
  * your storage is just an object where value is of subclass `Key`
  */
-const storage = {
+const storage: TypedStorage<StorageId> = {
   stringType: new AsyncKey('stringType'),
   boolType: new MysteriousKey('boolType'),
   numType: new MultipartSecureKey('numType'),
