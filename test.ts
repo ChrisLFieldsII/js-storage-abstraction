@@ -1,19 +1,9 @@
-# js-storage-abstraction
+import { Key } from './src';
+import test from 'ava';
 
-An abstraction to use the many different storage libraries in the js ecosystem
-
-Build your apps `storage` object with `Keys`
-
-Provides an abstract `Key` class that you can extend to make keys of all types.
-
-For example, make a `Key` that uses `AsyncStorage` or make a `Key` that uses `SecureStorage` or make a `Key` that uses `SessionStorage`, etc.
-
-## Features
-
-- Stores everything as a `string` but provides helper methods for storing/getting data of different types like `number`, `date`, `boolean`, `json`.
-
-```typescript
-import { Key } from 'js-storage-abstraction';
+/* 
+  the goal is to test abstract class helper methods behave as expected
+*/
 
 let inMemoryStorage: Record<string, any> = {};
 
@@ -70,4 +60,44 @@ const storage = {
   dateType: new SessionKey('dateType'),
   jsonType: new SecureKey('jsonType'),
 };
-```
+
+test('getNum', async (t) => {
+  // lucky number 7
+  const expected = 7;
+
+  await storage.numType.setNumber(expected);
+
+  const actual = await storage.numType.getNumber();
+  t.is(actual, expected);
+});
+
+test('getDate', async (t) => {
+  const date = new Date();
+  const expected = date.toISOString();
+  await storage.dateType.setDate(date);
+
+  const actual = (await storage.dateType.getDate()).toISOString();
+  t.is(actual, expected);
+});
+
+test('getBool', async (t) => {
+  let expected = true;
+  await storage.boolType.setBoolean(expected);
+  let actual = await storage.boolType.getBoolean();
+  t.is(actual, expected);
+
+  expected = false;
+  await storage.boolType.setBoolean(expected);
+  actual = await storage.boolType.getBoolean();
+  t.is(actual, expected);
+});
+
+test('getJSON', async (t) => {
+  const expected = {
+    name: 'chris',
+  };
+
+  await storage.jsonType.setJSON(expected);
+  const actual = await storage.jsonType.getJSON<typeof expected>();
+  t.deepEqual(actual, expected);
+});
