@@ -73,7 +73,7 @@ export interface IStorage<T extends KeyId> {
    */
   clear(): Promise<void>;
   /** get storage as json object */
-  getJSON(): Promise<Record<T, string>>;
+  getJSON(): Promise<Record<T, string | undefined>>;
 }
 
 export type JSStorageConfig<T extends KeyId> = {
