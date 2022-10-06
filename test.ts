@@ -62,7 +62,7 @@ const typedStorage: TypedStorage<StorageId> = {
   dateType: new SessionKey('dateType'),
   jsonType: new SecureKey('jsonType'),
 };
-const storage = new JSStorage({ storage: typedStorage });
+const storage = new JSStorage(typedStorage);
 const constantDate = new Date();
 const expectedStorage = {
   numType: 7,

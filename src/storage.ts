@@ -76,24 +76,20 @@ export interface IStorage<T extends KeyId> {
   getJSON(): Promise<Record<T, string | undefined>>;
 }
 
-export type JSStorageConfig<T extends KeyId> = {
-  storage: TypedStorage<T>;
-};
-
 /**
  * Convenience storage object that wraps `TypedStorage` to provide
  * common functionalities like using a key, clearing whole storage,
  * getting storage as json, etc
  */
 export class JSStorage<T extends KeyId> implements IStorage<T> {
-  constructor(private config: JSStorageConfig<T>) {}
+  constructor(private storage: TypedStorage<T>) {}
 
   use(key: T): Key<T> {
-    return this.config.storage[key];
+    return this.storage[key];
   }
 
   async clear(): Promise<void> {
-    const { storage } = this.config;
+    const { storage } = this;
 
     const keys = Object.keys(storage) as T[];
 
@@ -105,7 +101,7 @@ export class JSStorage<T extends KeyId> implements IStorage<T> {
   }
 
   async getJSON(): Promise<Record<T, string | undefined>> {
-    const { storage } = this.config;
+    const { storage } = this;
 
     const keys = Object.keys(storage) as T[];
 
