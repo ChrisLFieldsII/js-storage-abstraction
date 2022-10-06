@@ -18,6 +18,7 @@ export interface IKey {
 type KeyId = string;
 
 // NOTE: assume happy path. clients can deal with errors. dont want to assume their return values.
+
 /**
  * Abstract class to implement your keys.
  * Keys can be powered by any storage system!
@@ -61,10 +62,13 @@ export abstract class Key<T extends KeyId> implements IKey {
 }
 
 /**
- * Type for your `storage` object
+ * Type for your plain `storage` object
  */
 export type TypedStorage<T extends KeyId> = Record<T, Key<T>>;
 
+/**
+ * Interface for convenience storage object
+ */
 export interface IStorage<T extends KeyId> {
   /** Use a key in storage */
   use(key: T): Key<T>;
@@ -73,7 +77,7 @@ export interface IStorage<T extends KeyId> {
    */
   clear(): Promise<void>;
   /** get storage as json object */
-  getJSON(): Promise<Record<T, string | undefined>>;
+  getJSON(): Promise<Record<T, string | undefined | null>>;
 }
 
 /**
@@ -103,7 +107,7 @@ export class JSStorage<T extends KeyId> implements IStorage<T> {
     await Promise.all(promises);
   }
 
-  async getJSON(): Promise<Record<T, string | undefined>> {
+  async getJSON(): Promise<Record<T, string | undefined | null>> {
     const { storage } = this;
 
     const keys = Object.keys(storage) as T[];
@@ -119,6 +123,6 @@ export class JSStorage<T extends KeyId> implements IStorage<T> {
         ...accum,
         [key]: values[index],
       };
-    }, {} as Record<T, string | undefined>);
+    }, {} as Record<T, string | undefined | null>);
   }
 }

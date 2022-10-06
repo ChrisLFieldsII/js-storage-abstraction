@@ -1,13 +1,13 @@
 {
   "name": "js-storage-abstraction",
   "version": "1.0.0",
-  "description": "an abstraction to use the many different storage libraries in the js ecosystem",
+  "description": "An abstraction to use the many different storage libraries in the JavaScript ecosystem",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "repository": "https://github.com/YOUR_GITHUB_USER_NAME/js-storage-abstraction",
   "license": "MIT",
-  "keywords": [],
+  "keywords": ["JavaScript", "typescript", "storage", "abstraction"],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",

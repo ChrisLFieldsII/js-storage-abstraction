@@ -2,7 +2,7 @@
 
 ## Description
 
-An abstraction to use the many different storage libraries in the js ecosystem
+An abstraction to use the many different storage libraries in the JavaScript ecosystem
 
 Build your apps `storage` object with `Keys`
 
