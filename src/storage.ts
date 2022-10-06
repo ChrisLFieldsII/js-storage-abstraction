@@ -83,10 +83,14 @@ export interface IStorage<T extends KeyId> {
 /**
  * Convenience storage object that wraps `TypedStorage` to provide
  * common functionalities like using a key, clearing whole storage,
- * getting storage as json, etc
+ * getting storage as json, etc.
+ *
+ * You don't have to use this. You can instead use the `TypedStorage` storage directly
+ * or create your own abstraction!
  */
 export class JSStorage<T extends KeyId> implements IStorage<T> {
   constructor(private storage: TypedStorage<T>) {
+    this.use = this.use.bind(this);
     this.clear = this.clear.bind(this);
     this.getJSON = this.getJSON.bind(this);
   }
